@@ -1,0 +1,56 @@
+# -*- coding: UTF-8 -*-
+import os
+import re
+from pyrevit import script,revit
+from pyrevit.coreutils import current_time
+from datetime import datetime
+
+doc = revit.doc
+closed_time = current_time()
+
+# getting the project info
+file_name = doc.Title
+file_path = doc.PathName
+
+def get_project_name(doc, file_path):
+	source_path = revit.files.get_file_info(doc.PathName).CentralModelPath if doc.IsWorkshared else file_path
+	
+	match = re.search(r"Sagsmappe\\([^\\]+)", source_path)
+	return match.group(1) if match else None
+
+project_name = get_project_name(doc, file_path)
+# getting the time for the doc-opened file
+try:
+    script.load_data("Project opened", this_project=True)
+    stored_start_time = script.load_data("Project opened", this_project=True)
+except:
+    script.exit()
+
+if stored_start_time:
+	project_start = stored_start_time
+	project_closed = closed_time
+
+	# calculating the Δ time 
+	time_format = "%H:%M:%S"
+	date_format = "%x"
+
+	time1 = datetime.strptime(stored_start_time, time_format)
+	time2 = datetime.strptime(closed_time, time_format)  
+	time_diff = time2 - time1
+	closed_date = datetime.now().strftime(date_format)
+
+	# Building the data list for CSV
+	header = ["project_name","file_name","project_start_time","project_closed_time","time_diff"]
+	body = [project_name,file_name,project_start,project_closed,time_diff]
+
+	data = [header,body] 
+
+	# creating the file name
+	init_path = r'C:\Users\Bruger\Dansk El & Energi ApS\DEE Sharepoint - Dokumenter\DEE\Vasile\Projects'
+	result = "result_" + file_name + "_" + closed_date.replace("/", ".") + "_" + project_closed.replace(":","-") + ".csv" 
+	csv_path = os.path.join(init_path,result)
+
+	# export the CSV
+	script.dump_csv(data,csv_path)
+else:
+    script.exit()

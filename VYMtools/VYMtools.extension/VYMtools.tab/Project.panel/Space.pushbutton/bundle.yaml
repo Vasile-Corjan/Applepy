@@ -1,0 +1,8 @@
+name:
+    "Space button"
+title: 
+    "Space at room"
+tooltip: 
+    Creates a Space by the location of a linked Room.
+author: 
+    Vasile Corjan

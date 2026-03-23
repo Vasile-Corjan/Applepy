@@ -1,0 +1,24 @@
+# pyRevit
+import pyrevit
+from pyrevit import revit,DB
+from pyrevit import forms,script
+
+from Autodesk.Revit.DB import *
+import System
+import os
+import time
+
+
+doc = __revit__.ActiveUIDocument.Document
+view = doc.ActiveView
+
+# Set IFC export options
+options = IFCExportOptions()
+options.FileVersion = IFCVersion.IFC2x3
+options.AddOption("ExportBaseQuantities", "True")
+folder = r'C:\Users\Bruger\Desktop'
+# Export the view to IFC
+with revit.Transaction('IFC export'):
+	doc.Export(folder, doc.Title + ".ifc", options)
+
+
