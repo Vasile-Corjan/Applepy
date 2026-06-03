@@ -1,9 +1,9 @@
 layout:
   - Links
-  - Dynamo
   - Find
+  - Selection
+  - Modify
   - Drawing Set
   - Parameters
-  - Modify
   - Project
   - Testing

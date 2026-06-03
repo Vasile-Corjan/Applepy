@@ -1,15 +1,18 @@
+# -*- coding: utf-8 -*-
+# Created by Vasile Corjan
+
 from pyrevit import revit,DB
 from pyrevit import forms,script
 
-#get revit document
+#Get Revit document
 
 doc = revit.doc
 
-#get all CAD instances
+#Get all CAD instances
 
 cad_all = DB.FilteredElementCollector(doc).OfClass(DB.ImportInstance).ToElements()
 
-# get names of all CAD types
+#Get names of all CAD types
 
 type_names = []
 
@@ -20,7 +23,7 @@ for c in cad_all:
 
 set_names = list(set(type_names))
 
-# group CAD instances by their type names
+#Group CAD instances by their type names
 
 cad_ids,cad_types,cad_views = [],[],[]
 
@@ -41,17 +44,18 @@ for sn in set_names:
     cad_types.append(cad_types_sub)
     cad_views.append(cad_views_sub)
 
-# get the script output
+#Get the script output
 
 output = script.get_output()
 
-#report a header
-output.print_md("List of all CAD objects:")
-print("Click on Id to select or view an object")
+#Report a header
+output.print_md("###List of all CAD objects:")
+output.print_md("Click on Id to select or view an object")
+output.insert_divider()
 
-#report the CAD instances
+#Report the CAD instances
 for sn,ids,links,views in zip(set_names,cad_ids,cad_types,cad_views):
-    print('\n' + sn + ":")
+    output.print_md('\n' + sn + ":")
     for i,l,v in zip(ids,links,views):
         if v == "":
             print(l + 'id {}'.format(output.linkify(i)) + " is not view specific.")

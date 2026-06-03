@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Created by Vasile Corjan
-# Regular + Autodesk
+
 import clr
 clr.AddReference("RevitServices")
 from Autodesk.Revit.DB import *
@@ -8,11 +8,11 @@ from System.Collections.Generic import List
 import os, System
 
 # pyRevit
-import pyrevit
 from pyrevit import revit,DB
 from pyrevit import forms,script
 from pyrevit.coreutils import Timer
 
+# Constants
 doc = revit.doc
 uidoc = __revit__.ActiveUIDocument
 app = __revit__.Application
@@ -28,10 +28,11 @@ all_categories = list(System.Enum.GetValues(BuiltInCategory))
 # Select the all_categories
 selected_element_category = forms.SelectFromList.show(all_categories, title="Select the category of the element")
 
-	
+
 selected_tag_category = forms.SelectFromList.show(all_categories, title="Select the category of the tag")
 
-if selected_element_category or selected_tag_category:
+if selected_element_category is None or selected_tag_category is None:
+	forms.alert("There was nothing selected")
 	script.exit()
 
 tag_elements_collector = FilteredElementCollector(doc).OfCategory(selected_tag_category).WhereElementIsElementType()
@@ -41,34 +42,34 @@ selected_tag_family = forms.SelectFromList.show(available_tag_families, title="S
 selected_views = forms.select_views()
 
 def filter_elements_by_fam_name(selected_tag_family):
-    family_name_param_id = ElementId(BuiltInParameter.SYMBOL_FAMILY_NAME_PARAM)
-    family_parameter = ParameterValueProvider(family_name_param_id)
-    evaluator = FilterStringEquals()
-    f_rule = FilterStringRule(family_parameter, evaluator, selected_tag_family) 
-    filter_fam_name = ElementParameterFilter(f_rule)
-    filtered_tag_elements = FilteredElementCollector(doc).WherePasses(filter_fam_name).WhereElementIsNotElementType().ToElements()
+	family_name_param_id = ElementId(BuiltInParameter.SYMBOL_FAMILY_NAME_PARAM)
+	family_parameter = ParameterValueProvider(family_name_param_id)
+	evaluator = FilterStringEquals()
+	f_rule = FilterStringRule(family_parameter, evaluator, selected_tag_family) 
+	filter_fam_name = ElementParameterFilter(f_rule)
+	filtered_tag_elements = FilteredElementCollector(doc).WherePasses(filter_fam_name).WhereElementIsNotElementType().ToElements()
 
-    return filtered_tag_elements
+	return filtered_tag_elements
 
 filtered_tag_elements = filter_elements_by_fam_name(selected_tag_family)
 
 #Collect all elements in the view
 def find_untagged_elements(view, element_cat, tags):
-    collector_1 = FilteredElementCollector(doc, view.Id).OfCategory(element_cat)
-    #collector_2 = FilteredElementCollector(doc, view.Id).OfCategory(tag_cat)
-    all_fixtures = collector_1.WhereElementIsNotElementType().ToElements()
-    #tags = collector_2.WhereElementIsElementType().ToElements()
-    
-    tagged_elements = []
-    
-    for tag in tags:
-        tag_element = tag.GetTaggedLocalElements()
-        tagged_elements.extend(tag_element)
-        
-    tagged_element_ids = [e.Id for e in tagged_elements]
-    untagged_element_ids = [e.Id for e in all_fixtures if e.Id not in tagged_element_ids]
-    
-    return untagged_element_ids
+	collector_1 = FilteredElementCollector(doc, view.Id).OfCategory(element_cat)
+	collector_2 = FilteredElementCollector(doc, view.Id).OfCategory(tags)
+	all_fixtures = collector_1.WhereElementIsNotElementType().ToElements()
+	tags = collector_2.WhereElementIsElementType().ToElements()
+	
+	tagged_elements = []
+	
+	for tag in tags:
+		tag_element = tag.GetTaggedLocalElements()
+		tagged_elements.extend(tag_element)
+
+	tagged_element_ids = [e.Id for e in tagged_elements]
+	untagged_element_ids = [e.Id for e in all_fixtures if e.Id not in tagged_element_ids]
+
+	return untagged_element_ids
 
 
 # Output the results
@@ -76,7 +77,7 @@ output.print_md("# Missing tags")
 output.print_md("---")
 
 for view in selected_views:
-    untagged_elements_ids = find_untagged_elements(view, selected_element_category, filtered_tag_elements)
+    untagged_elements_ids = find_untagged_elements(view, selected_element_category, selected_tag_category)
     linkify_view = output.linkify(view.Id, view.Name)
     output.print_md("### View: {}".format(linkify_view))
     

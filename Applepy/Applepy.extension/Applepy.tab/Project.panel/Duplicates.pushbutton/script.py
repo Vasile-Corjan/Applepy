@@ -22,7 +22,6 @@ output.close_others()
 timer = Timer()
 WARNING_GUID = ["b4176cef-6086-45a8-a066-c3fd424c9412"]
 
-
 # 1. Get Elements
 collector = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ElectricalFixtures)
 all_elements = collector.WhereElementIsNotElementType().ToElements()
