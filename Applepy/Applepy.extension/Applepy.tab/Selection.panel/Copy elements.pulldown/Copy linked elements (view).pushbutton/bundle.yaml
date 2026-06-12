@@ -1,0 +1,9 @@
+context: doc-project
+
+title: Copy linked elements (view)
+
+tooltip: Copy elements from a linked view to the host view
+
+description: Copy view based elements such as lines, text, detail items etc.
+
+author: Vasile Corjan
