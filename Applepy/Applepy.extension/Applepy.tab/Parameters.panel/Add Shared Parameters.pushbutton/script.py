@@ -11,7 +11,7 @@ doc = revit.doc
 all_categories = [category for category in doc.Settings.Categories]
 
 version = HOST_APP.version
-if version == '2025':
+if version in ('2025', '2026'):
 	built_in_parameter_groups = [group for group in DB.ParameterUtils.GetAllBuiltInGroups()]#System.Enum.GetValues(DB.BuiltInParameterGroup)
 	built_in_parameter_group_names = [DB.LabelUtils.GetLabelForGroup(n) for n in built_in_parameter_groups]#GetLabelFor()
 else:

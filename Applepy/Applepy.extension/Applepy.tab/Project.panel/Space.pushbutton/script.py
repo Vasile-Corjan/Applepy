@@ -23,7 +23,6 @@ output.close_others()
 timer = Timer()
 
 version = HOST_APP.version
-#print(version, type(version))
 
 properties = DB.ParameterUtils.GetAllBuiltInGroups()
 active_level = doc.ActiveView.GenLevel

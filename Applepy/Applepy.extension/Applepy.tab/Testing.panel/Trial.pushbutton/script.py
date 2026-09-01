@@ -18,42 +18,53 @@ app = __revit__.Application
 active_view = doc.ActiveView
 
 output = script.get_output()
-output.close_others()
-timer = Timer()
 
-# COLLECT THE NECESSARY ELEMENTS  
-# All Revit Link instances in the current document
-links = DB.FilteredElementCollector(doc).OfClass(RevitLinkInstance).ToElements()
 
-if not links:
-	forms.alert("No Revit links found in the current document.", exitscript=True)
+output.print_html("<h3 id='demo' onclick='testFunction()'>Click me to change my color.</h3>")
+output.inject_script('function testFunction() {document.getElementById("demo").style.color = "blue";}', body=True)
+output.save_contents(r'C:\Users\Bruger\Desktop\test.html')
+# # COLLECT THE NECESSARY ELEMENTS  
+# # All Revit Link instances in the current document
+# links = DB.FilteredElementCollector(doc).OfClass(RevitLinkInstance).ToElements()
 
-# Select the desired Revit link from the list
-revit_instance_names = {link.Name:link for link in links}
-selected_linked_model = forms.SelectFromList.show(sorted(revit_instance_names), title="Select the linked model", button_name="Select")
-linked_model = revit_instance_names.get(selected_linked_model)
+# if not links:
+	# forms.alert("No Revit links found in the current document.", exitscript=True)
 
-# Getting the Revit Link Document
-linked_doc = linked_model.GetLinkDocument()
+# # Select the desired Revit link from the list
+# revit_instance_names = {link.Name:link for link in links}
+# selected_linked_model = forms.SelectFromList.show(sorted(revit_instance_names), title="Select the linked model", button_name="Select")
+# linked_model = revit_instance_names.get(selected_linked_model)
 
-# Levels and grids
-levels_in_linkdoc = DB.FilteredElementCollector(linked_doc).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType().ToElementIds()
-grids_in_linkdoc =  DB.FilteredElementCollector(linked_doc).OfCategory(BuiltInCategory.OST_Grids).WhereElementIsNotElementType().ToElementIds()
+# # Getting the Revit Link Document
+# linked_doc = linked_model.GetLinkDocument()
 
-if not levels_in_linkdoc and not grids_in_linkdoc:
-	forms.alert("No Levels or Grids found in the current document.", exitscript=True)
+# # Levels and grids
+# levels_in_linkdoc = DB.FilteredElementCollector(linked_doc).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType().ToElementIds()
+# grids_in_linkdoc =  DB.FilteredElementCollector(linked_doc).OfCategory(BuiltInCategory.OST_Grids).WhereElementIsNotElementType().ToElementIds()
 
-# Combining Grids and Levels lists into one
-elements_to_copy = List[ElementId]()
-elements_to_copy.AddRange(levels_in_linkdoc)
-elements_to_copy.AddRange(grids_in_linkdoc)
+# if not levels_in_linkdoc and not grids_in_linkdoc:
+	# forms.alert("No Levels or Grids found in the current document.", exitscript=True)
 
-# PREPERING THE VARIABLES FOR COPYING
-transform = Transform.Identity
-opts = CopyPasteOptions()
+# # Combining Grids and Levels lists into one
+# elements_to_copy = List[ElementId]()
+# elements_to_copy.AddRange(levels_in_linkdoc)
+# elements_to_copy.AddRange(grids_in_linkdoc)
 
-# Copying the elements
-with revit.Transaction("Copy selected linked elements"):
-	ElementTransformUtils.CopyElements(linked_doc, elements_to_copy, doc, transform, opts)
+# # PREPERING THE VARIABLES FOR COPYING
+# transform = Transform.Identity
+# opts = CopyPasteOptions()
 
-forms.alert("Successfully copied {} elements (Levels and Grids) from the linked document.".format(elements_to_copy.Count), title="Success")
+# # Copying the elements
+# with revit.Transaction("Copy selected linked elements"):
+	# ElementTransformUtils.CopyElements(linked_doc, elements_to_copy, doc, transform, opts)
+
+# forms.alert("Successfully copied {} elements (Levels and Grids) from the linked document.".format(elements_to_copy.Count), title="Success")
+
+# ### THIS IS NOT TESTED!!! IT IS NOT WORKING!!!!!!!!
+# with revit.Transaction("Acquire Coordinates"):
+	# try:
+		# doc.AcquireCoordinates(links[0].Id)
+		# output.print_md("### <font color='green'>The coordinates are acquired</font>")
+	# except InvalidOperationException as ex:
+		# output.print_md("### <font color='red'>Error: {}</font>".format(ex.Message))
+		
