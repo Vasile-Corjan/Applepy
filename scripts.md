@@ -1,11 +1,11 @@
 # Applepy pyRevit scripts
 
-This inventory covers every executable Python script found under `/home/runner/work/Applepy/Applepy/Applepy/Applepy.extension`, including pushbutton scripts and extension hooks.
+This inventory covers every executable Python script found under `Applepy/Applepy.extension`, including pushbutton scripts and extension hooks.
 
 | Script name | Description |
 | --- | --- |
 | Copy filters to other documents | Copies selected view filters from an open source document to destination views or view templates in the current model, preserving overrides. |
-| View filters based on paramater | Incomplete utility intended to create parameter-based view filters from element type values. |
+| View filters based on parameter | Incomplete utility intended to create parameter-based view filters from element type values. |
 | Find CAD | Reports all CAD imports and links and shows their owner views when they are view-specific. |
 | Find untagged | Finds untagged elements for a selected element category and tag category across selected views. |
 | File rename | Bulk renames files in a selected folder by replacing matching text in file names. |
