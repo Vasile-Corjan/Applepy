@@ -14,7 +14,7 @@ This inventory covers every executable Python script found under `Applepy/Applep
 | Space at room | Creates spaces in the host model at the locations of rooms from a selected linked model. |
 | Copy linked elements (document) | Copies selected model elements from a linked document into the current host model. |
 | Copy linked elements (view) | Copies selected view-based linked elements into the active host view. |
-| Exporting IFC | Testing utility that inspects pyRevit output methods related to table rendering. |
+| Exporting IFC | Debug utility currently used to inspect pyRevit output methods rather than perform IFC export. |
 | Loader | Loads selected Revit family files into the current project. |
 | Read Excel | Reads data from a selected Excel workbook and prints the sheet contents. |
 | TEST | Parses an exported HTML clash report and renders it as a clickable pyRevit output table. |
